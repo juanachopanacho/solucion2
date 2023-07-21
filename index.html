@@ -1,0 +1,193 @@
+<html>
+    <head>
+        <meta>
+
+        <!-- Añadir BootstrapCSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        
+        <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+        
+
+
+        <style>
+
+            /* input {
+              padding: 8px;
+              margin: 8px;
+              text-align: left;
+              border-bottom: 1px solid #ddd;
+          
+            } */
+        
+          </style>
+        
+
+    </head>
+    <body>
+        <form>
+            <input type="hidden" id="id" value="" />       
+            
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Digite su nombre:</span>
+                </div>
+                <input type="text" class="form-control" id="nombres" aria-describedby="basic-addon3">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Digite su edad:</span>
+                </div>
+                <input type="number" class="form-control" id="edad" aria-describedby="basic-addon3">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Digite su telefono:</span>
+                </div>
+                <input type="text" class="form-control" id="telefono" aria-describedby="basic-addon3">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Digite su dirección:</span>
+                </div>
+                <input type="text" class="form-control" id="direccion" aria-describedby="basic-addon3">
+            </div>
+
+            
+            <!-- <input type="text" id="nombres" /> -->
+            <!-- <input type="number" id="edad" />
+            <input type="text" id="telefono" />
+            <input type="text" id="direccion" /> -->
+
+            <button type="button" id="btnSave" class="btn btn-outline-success">
+
+                <span class="icon is-small">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  <span>Guardar</span>
+
+            </button>
+                
+
+        </form>
+        <table border="1" class="table table-striped table-dark">
+            <thead>
+                <tr>
+                    <th>
+                        Nombres
+                    </th>
+                    <th>
+                        Edad
+                    </th>
+                    <th>
+                        Telefono
+                    </th>
+                    <th>
+                        Direccion
+                    </th>
+                    <th>
+                        Acciones
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tablaPersonas">
+
+            </tbody>
+        </table>
+        <script>
+            const txtNombres = document.querySelector('#nombres');
+            const txtEdad = document.querySelector('#edad');
+            const txtTelefono = document.querySelector('#telefono');
+            const txtDireccion = document.querySelector('#direccion');
+            const txtId = document.querySelector('#id');
+
+            const btnSave = document.querySelector('#btnSave');
+            const tablaPersonas = document.querySelector('#tablaPersonas');
+            let personasRegistradas = [];
+
+            btnSave.onclick = () => {
+                const nombres = txtNombres.value;
+                const edad = txtEdad.value;
+                const telefono = txtTelefono.value;
+                const direccion = txtDireccion.value;
+                const id = personasRegistradas.length + 1;
+                if(nombres && edad && telefono && direccion) {
+                    if (txtId.value) {
+                        console.log(personasRegistradas[parseInt(txtId.value)], "pilas")
+                        personasRegistradas[parseInt(txtId.value)] = {
+                                nombres, edad, telefono, direccion
+                            };
+                    }else {
+                        personasRegistradas.push(
+                            {
+                                nombres, edad, telefono, direccion
+                            }
+                        );
+                    }
+                    actualizarTabla();
+                    document.querySelectorAll('input').forEach(e => e.value ="");
+                } else {
+                    alert("Complete todos los campos");
+                }
+            }
+
+            function actualizarTabla() {
+                tablaPersonas.innerHTML = '';
+                personasRegistradas.forEach((p, i) => {
+                    console.log(p);
+                    let tr = document.createElement('tr');
+                    let tdNombres = document.createElement('td');
+                    let tdEdad = document.createElement('td');
+                    let tdTelefono = document.createElement('td');
+                    let tdDireccion = document.createElement('td');
+                    let tdAcciones = document.createElement('td');
+
+                    let btnEditar = document.createElement('button');
+                    let btnEliminar = document.createElement('button');
+                    btnEditar.innerHTML = "Editar";
+                    btnEliminar.innerHTML = "Eliminar";
+
+                    btnEliminar.setAttribute('onclick', `eliminar(${i})`);
+                    btnEditar.setAttribute('onclick', `editar(${i})`);
+
+                    tdNombres.innerHTML = p.nombres;
+                    tdEdad.innerHTML = p.edad;
+                    tdTelefono.innerHTML = p.telefono;
+                    tdDireccion.innerHTML = p.direccion;
+
+                    tdAcciones.appendChild(btnEditar);
+                    tdAcciones.appendChild(btnEliminar);
+
+                    tr.appendChild(tdNombres);
+                    tr.appendChild(tdEdad);
+                    tr.appendChild(tdTelefono);
+                    tr.appendChild(tdDireccion);
+                    tr.appendChild(tdAcciones);
+                    tablaPersonas.appendChild(tr);
+                });
+            }
+
+            function editar(i) {
+                const data = personasRegistradas[i];
+                document.querySelectorAll('input').forEach(e => {
+                    e.value = data[e.getAttribute("id")];
+                });
+                txtId.value = i.toString();
+            }
+
+            function eliminar(i) {
+                let newList = [];
+                personasRegistradas.forEach((e, index) => {
+                    if (i.toString() != index.toString()) {
+                        newList.push(e);
+                    }
+                });
+                personasRegistradas = newList;
+                actualizarTabla();
+            }
+        </script>
+    </body>
+</html>
